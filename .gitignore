@@ -1,6 +1,14 @@
+# Python
 __pycache__/
 *.pyc
-.env
+
+# Logs
 *.log
-*.wav
+
+# OS junk
 .DS_Store
+
+# Local-only configs (if you add later)
+.env
+config.json
+

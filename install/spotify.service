@@ -1,0 +1,21 @@
+[Unit]
+Description=Spotify (Chromium) background window
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+
+ExecStart=%h/bin/start_spotify.sh
+
+# Push Spotify behind after it appears (X11 only)
+ExecStartPost=/bin/bash -lc 'sleep 2; wmctrl -r "Spotify" -b add,below,skip_taskbar,skip_pager || true'
+
+# Only restart if Chromium actually crashes
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target
