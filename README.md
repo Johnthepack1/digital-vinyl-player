@@ -1,4 +1,4 @@
-! ("C:\Users\johnt\Downloads\IMG_4927.jpeg")
+! ["C:\Users\johnt\Downloads\IMG_4927.jpeg"]
 # Digital Vinyl Spotify Player
 
 A Raspberry Pi–based Spotify player that behaves like a real vinyl record player.
