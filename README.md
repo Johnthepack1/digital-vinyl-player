@@ -16,7 +16,7 @@ A Raspberry Pi–based Spotify player that behaves like a real vinyl record play
 ## Hardware
 - Raspberry Pi 5
 - Touchscreen display
-- USB speakers or DAC
+- USB speakers
 - Arduino Nano (needle + volume)
 
 ## Software Stack
