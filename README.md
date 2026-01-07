@@ -1,4 +1,4 @@
-<img src="images/IMG_4927.jpeg" alt="Digital Vinyl Player" width="650">
+![Digital Vinyl Player](images/IMG_4927.jpeg)
 
 # Digital Vinyl Spotify Player
 
