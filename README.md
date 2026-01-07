@@ -1,3 +1,5 @@
+<img src="images/IMG_4927.jpeg" alt="Digital Vinyl Player" width="650">
+
 # Digital Vinyl Spotify Player
 
 A Raspberry Pi–based Spotify player that behaves like a real vinyl record player.
