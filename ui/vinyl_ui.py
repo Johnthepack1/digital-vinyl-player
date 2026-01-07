@@ -13,7 +13,7 @@ import shutil
 # EASY TUNING (edit these)
 # =========================
 SCREEN = 1080
-FPS = 60
+FPS = 30 
 
 # Vinyl spin
 ANGLE_SPEED = -0.5
@@ -45,7 +45,7 @@ TIME_Y_OFFSET = 10
 PREFERRED_PREFIXES = ("chromium", "chrome")
 
 # --- Volume Overlay (smooth + no flicker) ---
-VOL_POLL_SEC = 0.12
+VOL_POLL_SEC = 0.25
 VOL_DEADBAND = 1
 
 VOL_OVERLAY_HOLD = 0.9
