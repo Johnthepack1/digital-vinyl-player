@@ -1,0 +1,17 @@
+[Unit]
+Description=Nano Hardware Controls (Needle + Volume)
+After=graphical-session.target spotify.service
+Wants=spotify.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -u %h/digital-vinyl-player/nano/nano_control.py
+Restart=always
+RestartSec=2
+
+# Log to a file (works even when user journald logs aren't available)
+StandardOutput=append:%h/digital-vinyl-player/logs/nano-control.log
+StandardError=append:%h/digital-vinyl-player/logs/nano-control.log
+
+[Install]
+WantedBy=default.target

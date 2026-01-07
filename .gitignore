@@ -1,14 +1,20 @@
+# OS / editor junk
+.DS_Store
+*.swp
+*.bak
+
 # Python
 __pycache__/
 *.pyc
 
 # Logs
-*.log
+logs/
 
-# OS junk
-.DS_Store
+# Chromium / Spotify session data
+.config/
+.cache/
+.chromium-spotify/
+chromium-profile/
 
-# Local-only configs (if you add later)
-.env
-config.json
-
+# X / display
+.Xauthority

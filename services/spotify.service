@@ -1,0 +1,18 @@
+[Unit]
+Description=Spotify (Chromium) background window
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+
+ExecStart=%h/bin/start_spotify.sh
+
+# Keep running; only restart if Chromium crashes
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=default.target

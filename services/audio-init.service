@@ -1,0 +1,10 @@
+[Unit]
+Description=Set Pi Master Volume
+After=pipewire.service wireplumber.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.95
+
+[Install]
+WantedBy=default.target

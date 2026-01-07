@@ -1,24 +1,40 @@
-# Digital Vinyl Player (Spotify Web + Overlay)
+# Digital Vinyl Spotify Player
 
-This repo contains the **foundation setup** for a Raspberry Pi 5 Spotify “vinyl player” build:
-- Spotify runs in Chromium (not fullscreen)
-- Chromium is started automatically at boot using a **systemd user service**
-- Audio routes to USB speakers via PipeWire (default sink)
+A Raspberry Pi–based Spotify player that behaves like a real vinyl record player.
 
-## What’s included (so far)
-- `install/start_spotify.sh` — launches Chromium to open Spotify Web Player
-- `install/spotify.service` — systemd user service to auto-start Spotify on boot
+## Features
+- Spotify Web Player (Chromium)
+- Always-on-top Vinyl UI overlay
+- Physical needle control (play / pause)
+- Physical volume knob (Chromium stream volume)
+- Touch UI controls
+- Auto-start on boot
+- No phone required after setup
 
-> Note: This build intentionally avoids an `app/` folder. Installed scripts live in `~/bin`.
+## Hardware
+- Raspberry Pi 5
+- Touchscreen display
+- USB speakers or DAC
+- Arduino Nano (needle + volume)
 
----
+## Software Stack
+- Raspberry Pi OS (Desktop, X11)
+- Chromium (Spotify Web Player)
+- PipeWire / WirePlumber
+- Python (pygame)
+- playerctl / wpctl
+- systemd user services
 
-## Requirements
-- Raspberry Pi OS (Bookworm) with desktop
-- Chromium installed (`chromium`)
-- X11 recommended if you plan to use `wmctrl` to keep Spotify behind the overlay UI
+## Project Structure
 
-Packages:
-```bash
-sudo apt update
-sudo apt install -y chromium wmctrl
+## Installation (summary)
+1. Flash Raspberry Pi OS
+2. Install dependencies
+3. Copy scripts and services
+4. Enable systemd user services
+5. Login to Spotify once
+
+(Full step-by-step guide coming next.)
+
+## License
+Personal / educational use (update as needed)
