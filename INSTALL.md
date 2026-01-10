@@ -50,9 +50,9 @@ Update system:
 ```bash
 sudo apt update && sudo apt full-upgrade -y
 sudo reboot
-3. Required Packages
-bash
-Copy code
+```
+## Required Packages
+```bash
 sudo apt install -y \
   chromium-browser \
   python3 python3-pip python3-venv \
@@ -66,48 +66,45 @@ sudo apt install -y \
   playerctl \
   pipewire wireplumber \
   git curl
-4. Clone Repository
-bash
-Copy code
+```
+## Clone Repository
+```bash
 cd ~
 git clone https://github.com/YOUR_USERNAME/digital-vinyl-player.git
 cd digital-vinyl-player
-5. Python Dependencies
-bash
-Copy code
+```
+##Python Dependencies
+```bash
 pip3 install --user flask pyserial
-6. Audio Initialization
+```
+## Audio Initialization
 Audio is handled by PipeWire.
 
-bash
-Copy code
+```bash
 systemctl --user enable --now pipewire wireplumber
+```
 Default volume is set at boot using a user service.
 
-7. Arduino Nano
+## Arduino Nano
 The Arduino Nano handles:
-
 Needle position
-
 Buttons
-
 Volume input
 
 Firmware communicates with the Pi over serial.
 
-Confirm serial device:
+## Confirm serial device:
 
-bash
-Copy code
+```bash
 ls /dev/ttyUSB* /dev/ttyACM*
+```
 Update port in:
 
-bash
-Copy code
+```bash
 nano/nano_control.py
-8. Project Structure
-python
-Copy code
+```
+## Project Structure
+
 digital-vinyl-player/
 ├── ui/                      # Vinyl UI (Pygame)
 │   └── vinyl_ui.py
@@ -127,18 +124,16 @@ digital-vinyl-player/
 ├── logs/
 ├── README.md
 └── INSTALL.md
-9. systemd User Services (FULL LIST)
+## systemd User Services (FULL LIST)
 All services live in:
-
-ruby
-Copy code
+```bash
 ~/.config/systemd/user/
 vinyl-ui.service
+```
 Purpose:
 Runs the Pygame vinyl UI and keeps it on top.
 
-ini
-Copy code
+```bash
 Description=Vinyl UI Overlay
 ExecStart=~/bin/start_vinyl_ui.sh
 Restart=always
