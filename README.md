@@ -1,4 +1,4 @@
-![Digital Vinyl Player](RecordPlayer.png)
+![Digital Vinyl Player](images/RecordPlayer.png)
 
 # Digital Vinyl Player
 
