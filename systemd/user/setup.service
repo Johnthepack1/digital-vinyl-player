@@ -1,0 +1,10 @@
+[Unit]
+Description=Digital Vinyl Setup Mode (Wi-Fi + Spotify Login)
+
+[Service]
+Type=simple
+ExecStart=%h/bin/setup_mode.sh
+Restart=no
+
+[Install]
+WantedBy=default.target

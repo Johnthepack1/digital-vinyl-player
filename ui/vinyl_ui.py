@@ -8,15 +8,16 @@ import urllib.request
 from pathlib import Path
 import re
 import shutil
+import os
 
 # =========================
 # EASY TUNING (edit these)
 # =========================
 SCREEN = 1080
-FPS = 30 
+FPS = 30
 
 # Vinyl spin
-ANGLE_SPEED = -0.5
+ANGLE_SPEED = -0.9
 
 # Polling (lower = faster UI updates, more CPU)
 POLL_SEC = 0.25
@@ -107,14 +108,27 @@ def ctl(player, cmd):
 
 
 def smart_spotify(cmd):
-    """Use smart play/pause wrapper (playerctl first, xdotool fallback)."""
-    if shutil.which(SPOTIFY_CMD):
-        subprocess.Popen([SPOTIFY_CMD, cmd],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    else:
-        # fallback if script missing
-        subprocess.Popen(["playerctl", cmd],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    """
+    Use smart wrapper:
+    - Prefer ~/bin/spotify_cmd.sh (full path, not PATH)
+    - Always force DBUS_SESSION_BUS_ADDRESS so playerctl works from services.
+    """
+    env = os.environ.copy()
+    env.setdefault("DBUS_SESSION_BUS_ADDRESS", f"unix:path=/run/user/{os.getuid()}/bus")
+
+    try:
+        p = Path(SPOTIFY_CMD)
+        if p.exists() and os.access(str(p), os.X_OK):
+            subprocess.Popen([str(p), cmd],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                             env=env)
+            return
+    except Exception:
+        pass
+
+    subprocess.Popen(["playerctl", cmd],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     env=env)
 
 
 def clamp(v, a, b):
@@ -259,6 +273,14 @@ def overlay_alpha(now, start_t, end_t):
     return 0
 
 
+def load_vinyl_surface():
+    """Always load current ui_assets/vinyl.png (hot-reload safe)."""
+    p = ASSETS / "vinyl.png"
+    surf = pygame.image.load(p).convert_alpha()
+    surf = pygame.transform.smoothscale(surf, (VINYL_SIZE, VINYL_SIZE))
+    return surf
+
+
 def run():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN, SCREEN), pygame.FULLSCREEN)
@@ -270,8 +292,12 @@ def run():
     font_artist = pygame.font.Font(None, 34)
     font_time = pygame.font.Font(None, 26)
 
-    vinyl = pygame.image.load(ASSETS / "vinyl.png").convert_alpha()
-    vinyl = pygame.transform.smoothscale(vinyl, (VINYL_SIZE, VINYL_SIZE))
+    # --- Load vinyl + set up hot reload ---
+    vinyl_path = ASSETS / "vinyl.png"
+    vinyl = load_vinyl_surface()
+    last_vinyl_mtime = vinyl_path.stat().st_mtime if vinyl_path.exists() else 0.0
+    last_vinyl_check = 0.0
+    VINYL_CHECK_SEC = 0.5  # how often to check for skin updates
 
     play_img = pygame.transform.smoothscale(pygame.image.load(ASSETS / "play.png").convert_alpha(), (BTN_SIZE, BTN_SIZE))
     pause_img = pygame.transform.smoothscale(pygame.image.load(ASSETS / "pause.png").convert_alpha(), (BTN_SIZE, BTN_SIZE))
@@ -316,6 +342,18 @@ def run():
     while True:
         now = time.time()
         dt = clock.get_time() / 1000.0
+
+        # --- HOT RELOAD vinyl skin if vinyl.png changed on disk ---
+        if now - last_vinyl_check >= VINYL_CHECK_SEC:
+            last_vinyl_check = now
+            try:
+                if vinyl_path.exists():
+                    m = vinyl_path.stat().st_mtime
+                    if m != last_vinyl_mtime:
+                        vinyl = load_vinyl_surface()
+                        last_vinyl_mtime = m
+            except Exception:
+                pass
 
         # player detect
         if now - last_player_check >= PLAYER_CHECK_SEC:

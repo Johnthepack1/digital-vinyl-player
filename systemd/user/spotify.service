@@ -1,0 +1,21 @@
+[Unit]
+Description=Spotify (Chromium) background window
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+
+# Start chromium
+ExecStart=%h/bin/start_spotify.sh
+
+# After chromium starts, try to resume playback (every start/restart)
+ExecStartPost=%h/bin/spotify_autoplay.sh
+
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Local Wi-Fi setup server (Flask)
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/setup
+ExecStart=/usr/bin/python3 %h/setup/app.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Lock Chromium Audio Stream Volume to 100%
+After=pipewire.service wireplumber.service
+Wants=pipewire.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/lock_chromium_volume.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

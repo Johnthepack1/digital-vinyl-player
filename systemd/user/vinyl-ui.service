@@ -1,0 +1,19 @@
+[Unit]
+Description=Vinyl UI Overlay
+After=graphical-session.target spotify.service
+Wants=spotify.service
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+Environment=SDL_VIDEODRIVER=x11
+
+WorkingDirectory=%h/digital-vinyl-player/ui
+ExecStart=%h/bin/start_vinyl_ui.sh
+
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

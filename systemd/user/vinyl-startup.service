@@ -1,0 +1,11 @@
+[Unit]
+Description=Vinyl appliance startup router (setup vs normal)
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/vinyl_startup_router.sh
+
+[Install]
+WantedBy=default.target

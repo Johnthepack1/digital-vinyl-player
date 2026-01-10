@@ -1,0 +1,13 @@
+[Unit]
+Description=Lock Chromium volume (PipeWire)
+After=spotify.service
+Wants=spotify.service
+
+[Service]
+Type=simple
+ExecStart=%h/bin/lock_chromium_volume.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

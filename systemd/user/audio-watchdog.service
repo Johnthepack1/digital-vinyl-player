@@ -1,0 +1,11 @@
+[Unit]
+Description=Audio Watchdog (auto-fix crackle/glitch)
+After=pipewire.service wireplumber.service graphical-session.target
+
+[Service]
+ExecStart=%h/bin/audio_watchdog.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Lock Default Audio Sink Volume
+After=pipewire.service wireplumber.service
+Wants=pipewire.service
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/lock_sink_volume.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

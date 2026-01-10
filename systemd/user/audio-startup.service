@@ -1,0 +1,10 @@
+[Unit]
+Description=Audio Startup Mute + Fade (No Pop)
+After=pipewire.service wireplumber.service graphical-session.target
+
+[Service]
+ExecStart=%h/bin/audio_startup_fade.sh
+Type=oneshot
+
+[Install]
+WantedBy=default.target

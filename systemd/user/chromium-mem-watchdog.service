@@ -1,0 +1,15 @@
+[Unit]
+Description=Chromium memory watchdog (restart spotify.service if Chromium RSS too high)
+After=spotify.service
+Wants=spotify.service
+
+[Service]
+Type=oneshot
+
+# ---- Tuning (your chosen values) ----
+Environment=LIMIT_MIB=2300
+Environment=STRIKES_MAX=8
+Environment=COOLDOWN_SEC=600
+Environment=SERVICE_NAME=spotify.service
+
+ExecStart=/home/%u/bin/chromium_mem_watchdog.sh
