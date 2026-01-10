@@ -1,297 +1,257 @@
-# 📀 Digital Vinyl Spotify Player  
-## Full Installation Guide
+# Installation Guide
 
-This guide explains how to build and configure the **Digital Vinyl Spotify Player** from a fresh Raspberry Pi OS installation to a fully working, auto-starting system with physical controls.
+This document explains how to set up the Digital Vinyl Player from a fresh Raspberry Pi OS install.
 
-This project uses **Spotify Web Player in Chromium**, not librespot, for maximum stability.
+This project is designed to run **headless after setup** — no keyboard, mouse, or SSH required once it’s configured. Setup mode handles Wi-Fi and Spotify login using the touchscreen.
 
 ---
 
 ## 1. Hardware Requirements
 
-### Core Components
-- Raspberry Pi 5
-- Official Raspberry Pi 5 Active Cooler
-- microSD card (32 GB or larger recommended)
-- HDMI touchscreen display (USB touch input)
-- USB speakers or USB DAC
-
-### Physical Controls
-- Arduino Nano (or compatible)
-- Potentiometer for volume control
-- Needle / tonearm sensor  
-  (potentiometer, microswitch, or Hall sensor)
-- USB cable (Nano → Pi)
+- Raspberry Pi (tested on **Raspberry Pi 5**)
+- Round 1080×1080 touchscreen (X11 compatible)
+- Arduino Nano
+- USB speaker or audio output device
+- Physical controls:
+  - Needle / rotary input
+  - Buttons (play, back, UI switch, etc.)
+  - Volume knob (potentiometer)
+- Stable 5V power supply
 
 ---
 
 ## 2. Flash Raspberry Pi OS
 
-1. Download **Raspberry Pi Imager**
-2. Select:
-   - **Raspberry Pi OS (64-bit) with desktop**
-3. Open ⚙️ **Advanced Options**
-   - Enable SSH
-   - Enable auto-login
-   - Configure Wi-Fi
-   - Set hostname (example: `vinyl`)
-4. Flash the SD card and boot the Pi
+1. Download **Raspberry Pi OS (32-bit)**  
+   (Desktop version required – uses X11)
+
+2. Flash using Raspberry Pi Imager  
+   - Enable SSH **optional**
+   - Set username (examples below assume `vinyl2`)
+   - Enable Wi-Fi **optional** (setup mode can do this later)
+
+3. Boot the Pi and complete first-time setup
 
 ---
 
-## 3. First Boot Update
+## 3. System Preparation
 
-Open a terminal on the Pi and run:
+Update the system:
 
 ```bash
-sudo apt update
-sudo apt full-upgrade -y
+sudo apt update && sudo apt full-upgrade -y
 sudo reboot
+````
 
+Install required packages:
 
-After reboot, confirm the desktop loads normally.
-
-4. Install Required Packages
+```bash
 sudo apt install -y \
-chromium \
-playerctl \
-python3-pygame \
-wmctrl \
-unclutter \
-pipewire \
-wireplumber \
-git
+  chromium-browser \
+  python3 python3-pip python3-venv \
+  python3-pygame \
+  python3-flask \
+  python3-serial \
+  nmcli network-manager \
+  xdotool wmctrl \
+  onboard \
+  playerctl \
+  pipewire wireplumber \
+  git curl
+```
 
-What these do
+---
 
-Chromium → Spotify Web Player
+## 4. Clone the Repository
 
-playerctl → playback control + metadata
-
-pygame → Vinyl UI
-
-wmctrl → window focus control
-
-PipeWire / WirePlumber → audio routing
-
-5. Clone the Project Repository
+```bash
 cd ~
-git clone https://github.com/Johnthepack1/digital-vinyl-player.git
+git clone https://github.com/YOUR_USERNAME/digital-vinyl-player.git
 cd digital-vinyl-player
+```
 
-6. Verify Project Structure
+(Replace `YOUR_USERNAME` with your GitHub username.)
 
-You should now have:
+---
 
-digital-vinyl-player/
-├── ui/
-│   ├── vinyl_ui.py
-│   └── ui_assets/
-│       ├── vinyl.png
-│       ├── play.png
-│       ├── pause.png
-│       ├── next.png
-│       └── back.png
-├── nano/
-│   └── nano_control.py
-├── bin/
-│   ├── start_spotify.sh
-│   ├── spotify_cmd.sh
-│   └── start_vinyl_ui.sh
-├── services/
-│   ├── spotify.service
-│   ├── vinyl-ui.service
-│   ├── nano-control.service
-│   ├── audio-init.service
-│   └── spotify-volume-init.service
-├── images/
-└── README.md
+## 5. Python Dependencies
 
+Install Python dependencies:
 
-If files are missing, stop and fix before continuing.
+```bash
+pip3 install --user flask pyserial
+```
 
-7. Install Helper Scripts
+---
 
-Make scripts executable:
+## 6. Audio Setup
 
-chmod +x bin/*.sh
+Ensure PipeWire is running and set default volume:
 
+```bash
+systemctl --user enable --now pipewire wireplumber
+wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.95
+```
 
-(Optional but recommended):
+(Optional) Test audio:
 
-mkdir -p ~/bin
-cp bin/*.sh ~/bin/
+```bash
+speaker-test -c 2
+```
 
-8. Install systemd User Services
+---
 
-Copy service files:
+## 7. Arduino Nano Setup
 
-mkdir -p ~/.config/systemd/user
-cp services/*.service ~/.config/systemd/user/
+1. Flash the Arduino Nano with the control firmware
+   (needle position, buttons, volume)
 
+2. Confirm the Nano appears as a serial device:
 
-Reload systemd:
+```bash
+ls /dev/ttyUSB* /dev/ttyACM*
+```
 
+3. Update the serial port in:
+
+```
+nano/nano_control.py
+```
+
+---
+
+## 8. systemd User Services
+
+This project relies on **systemd user services** (not root services).
+
+Enable all services:
+
+```bash
 systemctl --user daemon-reload
 
+systemctl --user enable --now \
+  vinyl-ui.service \
+  spotify.service \
+  wifi-setup.service \
+  nano-control.service \
+  chromium-mem-watchdog.timer \
+  audio-init.service
+```
 
-Enable services:
+Check status:
 
-systemctl --user enable spotify.service
-systemctl --user enable vinyl-ui.service
-systemctl --user enable nano-control.service
-systemctl --user enable audio-init.service
-systemctl --user enable spotify-volume-init.service
+```bash
+systemctl --user status vinyl-ui.service spotify.service
+```
 
-9. First Spotify Login (One-Time)
+---
 
-Start Spotify manually once:
-
-systemctl --user start spotify.service
-
-
-Chromium will open.
-
-Log into Spotify
-
-Play any song once
-
-Confirm audio plays through USB speakers
-
-Spotify credentials are now cached locally.
-
-10. Start the Vinyl UI
-systemctl --user start vinyl-ui.service
-
-
-You should see:
-
-Vinyl UI overlay
-
-Album artwork
-
-Track info
-
-Touch controls
-
-11. Enable Nano Hardware Controls
-
-Plug in the Arduino Nano via USB.
-
-Check device:
-
-ls /dev/ttyUSB*
-
-
-Confirm service:
-
-systemctl --user status nano-control.service
-
-Expected Behavior
-
-Volume knob controls Spotify stream volume
-
-Needle movement triggers play / pause
-
-No phone required after setup
-
-12. Audio Verification
-
-Check PipeWire routing:
-
-wpctl status
-
-
-Set system volume once (recommended):
-
-wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.95
-
-
-From this point on:
-
-System volume stays fixed
-
-Physical knob controls Spotify only
-
-13. Auto-Start Verification
-
-Reboot:
-
-sudo reboot
-
+## 9. First Boot Behavior
 
 On boot:
 
-Desktop loads
+* Spotify launches in Chromium (background)
+* Vinyl UI launches and stays on top
+* Hardware controls are active
+* No keyboard or mouse is required
 
-Spotify starts automatically
+---
 
-Vinyl UI appears on top
+## 10. Setup Mode (Wi-Fi + Spotify Login)
 
-Needle control works immediately
+Setup mode is used **only when needed**.
 
-14. Thermal & Performance Tuning (Recommended)
-Reduce UI load
+### Enter setup mode
 
-Edit:
+* Hold the **physical back button** for **7+ seconds**
 
-nano ui/vinyl_ui.py
+Setup mode will:
 
+* Stop the vinyl UI
+* Open a local Wi-Fi setup page
+* Open Spotify login
+* Show an on-screen keyboard
+* Use 620×620 windows centered on the round screen
 
-Set:
+### Exit setup mode
 
-FPS = 30
+* Tap **Done** on the Wi-Fi setup page
+  OR
+* Reboot after setup completes
 
+Normal mode resumes automatically.
 
-Restart UI:
+---
 
-systemctl --user restart vinyl-ui.service
+## 11. Chromium Memory Watchdog
 
-Quiet fan curve
+Chromium is monitored for memory usage.
 
-Edit:
+* If memory stays too high for too long:
 
-sudo nano /boot/firmware/config.txt
+  * Spotify is restarted automatically
+* Cooldown prevents restart loops
+* No user interaction required
 
+Settings are adjustable in:
 
-Add:
+```
+bin/chromium_mem_watchdog.sh
+```
 
-[all]
-dtparam=fan_temp0=65
-dtparam=fan_temp0_hyst=6
+---
 
+## 12. Common Issues
 
-Reboot.
+### Spotify won’t play after reboot
 
-15. Troubleshooting
-Vinyl UI disappears
-systemctl --user restart vinyl-ui.service
+* Wait ~10 seconds after boot
+* Autoplay simulates a user gesture
+* If needed:
 
-Spotify not responding
+```bash
 systemctl --user restart spotify.service
+```
 
-Nano not detected
-groups
+### Vinyl UI not visible
+
+```bash
+systemctl --user restart vinyl-ui.service
+```
+
+### Setup mode not appearing
+
+```bash
+rm -f ~/.vinyl/setup_complete
+touch ~/.vinyl/force_setup
+reboot
+```
+
+---
+
+## 13. Designed Behavior
+
+* No keyboard or mouse required after setup
+* Safe to power off normally
+* Designed to recover automatically
+* Intended to run unattended
+
+---
+
+## Notes
+
+This project evolved through real use, testing, crashes, and fixes.
+It’s designed to feel intentional — not like a computer in disguise.
+
+If you’re installing this, expect to tweak hardware and wiring based on your build. The software is flexible, but the physical side matters.
+
+---
+
+## Author
+
+Built by **John Turner**
+Engineering student focused on embedded systems, robotics, and hands-on design.
 
 
-Ensure user is in dialout.
-
-View logs
-journalctl --user -u vinyl-ui.service -f
-journalctl --user -u nano-control.service -f
-
-16. Final Result
-
-You now have:
-
-A self-contained Spotify vinyl player
-
-Physical controls
-
-Auto-start on boot
-
-No cloud APIs
-
-No phone dependency
-
-Stable, reproducible setup
+Just say what’s next.
+```
