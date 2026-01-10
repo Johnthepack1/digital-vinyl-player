@@ -104,7 +104,7 @@ Update port in:
 nano/nano_control.py
 ```
 ## Project Structure
-
+```bash
 digital-vinyl-player/
 ├── ui/                      # Vinyl UI (Pygame)
 │   └── vinyl_ui.py
@@ -124,6 +124,7 @@ digital-vinyl-player/
 ├── logs/
 ├── README.md
 └── INSTALL.md
+```
 ## systemd User Services (FULL LIST)
 All services live in:
 ```bash
@@ -138,62 +139,62 @@ Description=Vinyl UI Overlay
 ExecStart=~/bin/start_vinyl_ui.sh
 Restart=always
 spotify.service
+```
 Purpose:
 Launches Chromium with Spotify Web Player and keeps it running.
 
-ini
-Copy code
+```bash
+
 Description=Spotify (Chromium)
 ExecStart=~/bin/start_spotify.sh
 ExecStartPost=~/bin/spotify_autoplay.sh
 Restart=always
 nano-control.service
+```
 Purpose:
 Handles all physical controls via Arduino Nano.
 
-ini
-Copy code
+```ini
 Description=Nano Hardware Controls
 ExecStart=python3 ~/digital-vinyl-player/nano/nano_control.py
 Restart=always
 wifi-setup.service
+```
 Purpose:
 Runs the local Wi-Fi setup web server.
 
-ini
-Copy code
+```ini
 Description=Local Wi-Fi setup server
 ExecStart=python3 ~/setup/app.py
 Restart=always
 chromium-mem-watchdog.service
+```
 Purpose:
 Monitors Chromium memory usage and restarts Spotify if needed.
 
-ini
-Copy code
+```ini
 Description=Chromium Memory Watchdog
 Type=oneshot
 ExecStart=~/bin/chromium_mem_watchdog.sh
 chromium-mem-watchdog.timer
+```
 Purpose:
 Runs the watchdog on a schedule.
 
-ini
-Copy code
+```ini
 OnBootSec=60
 OnUnitActiveSec=120
 audio-init.service
+```
 Purpose:
 Sets default system volume on boot.
 
-ini
-Copy code
+```ini
 ExecStart=wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.95
-10. Enable All Services
-bash
-Copy code
+```
+## Enable All Services
+```bash
 systemctl --user daemon-reload
-
 systemctl --user enable --now \
   vinyl-ui.service \
   spotify.service \
@@ -201,12 +202,13 @@ systemctl --user enable --now \
   wifi-setup.service \
   chromium-mem-watchdog.timer \
   audio-init.service
+```
 Check status:
 
-bash
-Copy code
+```bash
 systemctl --user status vinyl-ui.service spotify.service
-11. Boot Behavior
+```
+## Boot Behavior
 On power-up:
 
 Audio initializes
@@ -219,7 +221,7 @@ Physical controls become active
 
 System runs unattended
 
-12. Setup Mode (Wi-Fi + Spotify Login)
+## Setup Mode (Wi-Fi + Spotify Login)
 Enter setup mode
 Hold Back button for 7+ seconds
 
@@ -239,7 +241,7 @@ Tap Done
 
 Vinyl UI + Spotify restart automatically
 
-13. Reliability Features
+## Reliability Features
 Chromium memory watchdog with cooldown
 
 Spotify auto-restarts if it crashes
@@ -248,36 +250,25 @@ UI restarts automatically
 
 Designed for long unattended runs
 
-14. Recovery Commands
+## Recovery Commands
 Force setup mode:
 
-bash
-Copy code
+```bash
 rm -f ~/.vinyl/setup_complete
 touch ~/.vinyl/force_setup
 reboot
+```
 Restart UI:
 
-bash
-Copy code
+```bash
 systemctl --user restart vinyl-ui.service
+```
 Restart Spotify:
 
-bash
-Copy code
+```bash
 systemctl --user restart spotify.service
-Notes
-This project was built through real use:
+```
 
-Things broke
-
-Memory leaked
-
-Windows froze
-
-Hardware misbehaved
-
-Everything here exists because it needed to.
 
 Author
 Built by John Turner
