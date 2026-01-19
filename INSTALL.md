@@ -76,7 +76,20 @@ cd digital-vinyl-player
 ```
 ##Python Dependencies
 ```bash
-pip3 install --user flask pyserial
+cd ~/digital-vinyl-player
+
+sudo apt update
+sudo apt install -y python3-venv python3-full
+
+# create + activate venv
+python3 -m venv .venv
+source .venv/bin/activate
+
+# upgrade pip inside venv
+python -m pip install --upgrade pip
+
+pip install flask pyserial
+
 ```
 ## Audio Initialization
 Audio is handled by PipeWire.
