@@ -53,19 +53,20 @@ sudo reboot
 ```
 ## Required Packages
 ```bash
+sudo apt update
 sudo apt install -y \
-  chromium-browser \
+  chromium \
   python3 python3-pip python3-venv \
   python3-pygame \
   python3-flask \
   python3-serial \
   network-manager \
-  nmcli \
   xdotool wmctrl \
   onboard \
   playerctl \
-  pipewire wireplumber \
+  pipewire pipewire-pulse wireplumber \
   git curl
+
 ```
 ## Clone Repository
 ```bash
