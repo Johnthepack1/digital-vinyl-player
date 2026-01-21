@@ -5,16 +5,18 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+Restart=on-failure
+RestartSec=2
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
 
 # Start chromium
 ExecStart=%h/digital-vinyl-player/bin/spotify_kiosk.sh
 
-# After chromium starts, try to resume playback (every start/restart)
+StandardOutput=append:%h/logs/spotify.service.log
+StandardError=append:%h/logs/spotify.service.log
 
-Restart=on-failure
-RestartSec=2
+# After chromium starts, try to resume playback (every start/restart)
 
 [Install]
 WantedBy=default.target
