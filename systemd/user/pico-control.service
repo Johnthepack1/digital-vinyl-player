@@ -1,0 +1,16 @@
+[Unit]
+Description=Pico Hardware Controls (Needle + Volume)
+After=graphical-session.target spotify.service
+Wants=spotify.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -u %h/digital-vinyl-player/pico/pico_control.py
+Restart=always
+RestartSec=2
+
+StandardOutput=append:%h/digital-vinyl-player/logs/pico-control.log
+StandardError=append:%h/digital-vinyl-player/logs/pico-control.log
+
+[Install]
+WantedBy=default.target
