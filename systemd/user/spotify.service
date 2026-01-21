@@ -9,12 +9,11 @@ Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
 
 # Start chromium
-ExecStart=%h/bin/start_spotify.sh
+ExecStart=%h/digital-vinyl-player/bin/spotify_kiosk.sh
 
 # After chromium starts, try to resume playback (every start/restart)
-ExecStartPost=%h/bin/spotify_autoplay.sh
 
-Restart=always
+Restart=on-failure
 RestartSec=2
 
 [Install]
