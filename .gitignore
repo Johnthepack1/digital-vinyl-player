@@ -6,9 +6,11 @@
 # Python
 __pycache__/
 *.pyc
+.env
 
 # Logs
 logs/
+runtime/
 
 # Chromium / Spotify session data
 .config/

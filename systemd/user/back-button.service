@@ -1,5 +1,5 @@
 [Unit]
-Description=Show vinyl UI while music plays
+Description=GPIO 22 back/setup button controller
 After=graphical-session.target spotify.service vinyl-ui.service
 Wants=spotify.service vinyl-ui.service
 
@@ -9,12 +9,11 @@ Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
 EnvironmentFile=-%h/digital-vinyl-player/.env
 WorkingDirectory=%h/digital-vinyl-player
-ExecStart=%h/digital-vinyl-player/bin/ui_focus_watcher.sh
+ExecStart=%h/digital-vinyl-player/bin/start_back_button_service.sh
 Restart=always
 RestartSec=2
-StartLimitIntervalSec=0
-StandardOutput=append:%h/digital-vinyl-player/logs/state-watcher.log
-StandardError=append:%h/digital-vinyl-player/logs/state-watcher.log
+StandardOutput=append:%h/digital-vinyl-player/logs/back-button.log
+StandardError=append:%h/digital-vinyl-player/logs/back-button.log
 
 [Install]
 WantedBy=default.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=Local setup portal for Wi-Fi and music login
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-%h/digital-vinyl-player/.env
+WorkingDirectory=%h/digital-vinyl-player
+ExecStart=%h/digital-vinyl-player/bin/start_setup_portal.sh
+Restart=always
+RestartSec=2
+StandardOutput=append:%h/digital-vinyl-player/logs/setup-portal.log
+StandardError=append:%h/digital-vinyl-player/logs/setup-portal.log
+
+[Install]
+WantedBy=default.target

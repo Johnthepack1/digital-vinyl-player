@@ -1,0 +1,22 @@
+[Unit]
+Description=Spotify (Chromium) background window
+After=graphical-session.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=2
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=%h/.Xauthority
+
+# Start chromium
+ExecStart=%h/digital-vinyl-player/bin/spotify_kiosk.sh
+
+StandardOutput=append:%h/logs/spotify.service.log
+StandardError=append:%h/logs/spotify.service.log
+
+# After chromium starts, try to resume playback (every start/restart)
+
+[Install]
+WantedBy=default.target
