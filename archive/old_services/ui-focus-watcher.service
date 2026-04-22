@@ -1,5 +1,5 @@
 [Unit]
-Description=Show vinyl UI while music plays
+Description=Focus watcher: Vinyl UI on Playing, Spotify on Paused
 After=graphical-session.target spotify.service vinyl-ui.service
 Wants=spotify.service vinyl-ui.service
 
@@ -7,14 +7,10 @@ Wants=spotify.service vinyl-ui.service
 Type=simple
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
-EnvironmentFile=-%h/digital-vinyl-player/.env
-WorkingDirectory=%h/digital-vinyl-player
 ExecStart=%h/digital-vinyl-player/bin/ui_focus_watcher.sh
 Restart=always
 RestartSec=2
 StartLimitIntervalSec=0
-StandardOutput=append:%h/digital-vinyl-player/logs/state-watcher.log
-StandardError=append:%h/digital-vinyl-player/logs/state-watcher.log
 
 [Install]
 WantedBy=default.target

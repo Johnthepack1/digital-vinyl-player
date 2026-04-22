@@ -1,22 +1,19 @@
 [Unit]
-Description=Spotify (Chromium) background window
-After=graphical-session.target network-online.target
-Wants=network-online.target
+Description=Chromium kiosk for the configured web music provider
+After=graphical-session.target network-online.target setup-portal.service
+Wants=network-online.target setup-portal.service
 
 [Service]
 Type=simple
-Restart=on-failure
-RestartSec=2
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
-
-# Start chromium
+EnvironmentFile=-%h/digital-vinyl-player/.env
+WorkingDirectory=%h/digital-vinyl-player
 ExecStart=%h/digital-vinyl-player/bin/spotify_kiosk.sh
-
-StandardOutput=append:%h/logs/spotify.service.log
-StandardError=append:%h/logs/spotify.service.log
-
-# After chromium starts, try to resume playback (every start/restart)
+Restart=on-failure
+RestartSec=2
+StandardOutput=append:%h/digital-vinyl-player/logs/spotify.service.log
+StandardError=append:%h/digital-vinyl-player/logs/spotify.service.log
 
 [Install]
 WantedBy=default.target

@@ -1,5 +1,5 @@
 [Unit]
-Description=Set Pi Master Volume
+Description=Set Pi audio volume
 After=pipewire.service wireplumber.service
 
 [Service]
